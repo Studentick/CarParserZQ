@@ -120,6 +120,7 @@ namespace RegularX.Objs_auto
                 compGroup.Add(new ComplectationGroups(group.Groups[4].Value, group.Groups[2].Value));
             }
 
+
             //var cortages = Regex.Matches(line, "<div id='Body' class='ifListBody'>(.*?)<div><div><div></div")
             //    .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
             //cortages.RemoveAt(0); cortages.RemoveRange(5, cortages.Count - 5);
