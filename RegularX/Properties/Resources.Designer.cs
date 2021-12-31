@@ -88,6 +88,33 @@ namespace RegularX.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на .
+        /// </summary>
+        internal static string getDetailParam {
+            get {
+                return ResourceManager.GetString("getDetailParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на .
+        /// </summary>
+        internal static string getDetailsTable {
+            get {
+                return ResourceManager.GetString("getDetailsTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;table(.*?)&gt;&lt;tbody&gt;(.*?)&lt;/tbody&gt;&lt;/table&gt;.
+        /// </summary>
+        internal static string getDetailTable {
+            get {
+                return ResourceManager.GetString("getDetailTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на &lt;div class=&apos;List&apos;&gt;&lt;div class=&apos;(.*?)&apos;&gt;&lt;a href=&apos;(.*?)&apos;\s(.*?)&gt;(.*?)&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;.
         /// </summary>
         internal static string getGroups {
@@ -102,6 +129,15 @@ namespace RegularX.Properties {
         internal static string getParams {
             get {
                 return ResourceManager.GetString("getParams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;div class=&apos;List&apos;&gt;&lt;div class=&apos;image&apos;&gt;&lt;a href=&apos;(.*?)&apos;\s(.*?)&gt;&lt;img src=&apos;(.*?)&apos;&gt;(.*?)&lt;div class=&apos;name&apos;&gt;&lt;a href=&apos;(.*?)&apos;\s(.*?)&gt;(.*?)&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;.
+        /// </summary>
+        internal static string getSubGroups {
+            get {
+                return ResourceManager.GetString("getSubGroups", resourceCulture);
             }
         }
     }

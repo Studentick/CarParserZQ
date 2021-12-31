@@ -46,6 +46,7 @@
     <Compile Include="Objs_auto\Complectation.cs" />
     <Compile Include="Objs_auto\ComplectationGroups.cs" />
     <Compile Include="Objs_auto\Controller.cs" />
+    <Compile Include="Objs_auto\Detail.cs" />
     <Compile Include="Objs_auto\Model.cs" />
     <Compile Include="Objs_auto\SubGroup.cs" />
     <Compile Include="Program.cs" />

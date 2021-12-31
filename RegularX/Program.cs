@@ -23,7 +23,7 @@ namespace RegularX
 
             //ss = Decoder(ss);
 
-            Controller.GetComplGroup();
+            Controller.GetDetails();
 
             Console.ReadKey();
         }

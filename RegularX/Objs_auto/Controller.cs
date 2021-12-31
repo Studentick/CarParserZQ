@@ -120,14 +120,89 @@ namespace RegularX.Objs_auto
                 compGroup.Add(new ComplectationGroups(group.Groups[4].Value, group.Groups[2].Value));
             }
 
-
             //var cortages = Regex.Matches(line, "<div id='Body' class='ifListBody'>(.*?)<div><div><div></div")
             //    .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
             //cortages.RemoveAt(0); cortages.RemoveRange(5, cortages.Count - 5);
         }
 
+        public static void GetSubGroupCompl(string link = "")
+        {
+            List<SubGroup> subGroups = new List<SubGroup>();
+            string line = "";
+            using (WebClient wc = new WebClient())
+            {
+                wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
+                line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getSubGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1");
+                line = Program.MyDecoder(line);
+            }
+            // Выбираем текст для дальнейшей обработки
+            var subgroups_str = Regex.Match(line, "<div class='Tiles'><div class='List '>(.*?)</div></div></div></div>").Groups[1].Value + "</div>" + "</div>";
+
+            var subgroups = Regex.Matches(subgroups_str, Resources.getSubGroups);
+
+            foreach(Match subgroup in subgroups)
+            {
+                subGroups.Add(new SubGroup(subgroup.Groups[7].Value, subgroup.Groups[5].Value));
+            }
+            subGroups.RemoveRange(5, subgroups.Count-5);
+            Console.WriteLine();
+
+        }
 
 
-    }
+        public static void GetDetails(string link = "")
+        {
+            // Todo: разделение id на старый и новый, навести порядок в коде
+            // 
+
+            List<Detail> Details = new List<Detail>();
+            string line = "";
+            using (WebClient wc = new WebClient())
+            {
+                wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
+                line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getParts&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1&subgroup=1904");
+                line = Program.MyDecoder(line);
+            }
+
+            // Get detail tabble string
+            var details_table_str = Regex.Match(line, "<table(.*?)Data-brand='(.*?)'>(.*?)</table>").Groups[3].Value;
+
+            // Get detail table list of the string
+            var details_table = Regex.Matches(details_table_str, "<tr (.*?)>(.*?)</tr>").Cast<Match>().Select(x => x.Groups[2].Value).ToList<string>();
+            //details_table.RemoveAt(0);
+            int detail_count = details_table.Count;
+            // Потому что сайт непредсказуем
+            string tmp_code = "", tmp_tree = "";
+
+            foreach (var item in details_table)
+            {
+                if (item.Substring(0,3) == "<th")
+                {
+                    // detail_header - ?
+                    var header = Regex.Match(item, "<th(.*?)>(.*?)&nbsp;(.*?)</th>");
+                    tmp_code = header.Groups[2].Value;
+                    tmp_tree = header.Groups[3].Value;
+                }
+                else
+                {
+                    var body = Regex.Matches(item, "<td>(.*?)</td>")
+                        .Cast<Match>().Select(x => x.Groups[1].Value).ToList();
+                    var code = Regex.Match(body[0], "<div (.*?)href='(.*?)'(.*?)>(.*?)</a></div>");
+                    var id = code.Groups[4].Value;
+                    var lnk = code.Groups[2].Value;
+                    var cnt = Regex.Match(body[1], "(.*?)>(.*?)<(.*?)");
+                    var cn = cnt.Groups[2].Value;
+                    var per = Regex.Match(body[2], "(.*?)>(.*?)<(.*?)");
+                    var p = per.Groups[2].Value;
+                    var info = Regex.Match(body[3], "<div(.*?)>(.*?)<br />(.*?)</div>");
+                    var i = info.Groups[2].Value + "   " +info.Groups[3].Value;
+                    Details.Add(new Detail(id, Convert.ToInt32(cnt.Groups[2].Value), info.Groups[2].Value, tmp_code, tmp_tree, per.Groups[2].Value, lnk));
+                }
+            }
+
+
+        }
+
+        }
 
 }
