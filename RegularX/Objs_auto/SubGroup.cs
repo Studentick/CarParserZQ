@@ -14,7 +14,7 @@ namespace RegularX.Objs_auto
         public SubGroup(string name, string link)
         {
             Name = name;
-            Link = link;
+            Link = Controller.core_lnk + link;
         }
     }
 }

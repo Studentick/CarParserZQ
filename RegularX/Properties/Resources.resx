@@ -137,7 +137,7 @@
     <comment>Получение групп</comment>
   </data>
   <data name="getParams" xml:space="preserve">
-    <value>&lt;div class='name'&gt;(.*?)&lt;/div&gt;(.*?)&lt;div class='id'&gt;&lt;a href=(.*?) title='' target=''&gt;(.*?)&lt;/a&gt;&lt;/div&gt;(.*?)&lt;div class='dateRange'&gt;(.*?)&lt;/div&gt;(.*?)&lt;div class='modelCode'&gt;(.*?)&lt;/div&gt;</value>
+    <value>&lt;div class='name'&gt;(.*?)&lt;/div&gt;(.*?)&lt;div class='id'&gt;&lt;a href='(.*?)' title='' target=''&gt;(.*?)&lt;/a&gt;&lt;/div&gt;(.*?)&lt;div class='dateRange'&gt;(.*?)&lt;/div&gt;(.*?)&lt;div class='modelCode'&gt;(.*?)&lt;/div&gt;</value>
     <comment>Получение параметров</comment>
   </data>
   <data name="getSubGroups" xml:space="preserve">

@@ -20,8 +20,9 @@ namespace RegularX.Objs_auto
         {
             ModelCode = modelCode;
             Name = name;
-            Link = link;
-            Period = period;
+            Link = Controller.core_lnk + link;
+            Period = Controller.ConvertPeriod(period);
+            Complectation = compl;
         }
 
         public void Print()

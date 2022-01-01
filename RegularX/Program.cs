@@ -12,6 +12,7 @@ namespace RegularX
 {
     class Program
     {
+        
         public static List<Model> models = new List<Model>();
         static void Main(string[] args)
         {
@@ -23,7 +24,7 @@ namespace RegularX
 
             //ss = Decoder(ss);
 
-            Controller.GetDetails();
+            var a = Controller.GetModels();
 
             Console.ReadKey();
         }

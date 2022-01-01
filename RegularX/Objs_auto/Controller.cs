@@ -13,6 +13,7 @@ namespace RegularX.Objs_auto
     // Сделать проверку получения результата от сайта
     class Controller
     {
+        public const string core_lnk = "https://www.ilcats.ru";
         public static List<Model> GetModels(string link = "https://www.ilcats.ru/toyota/?function=getModels&market=EU")
         {
             List<Model> models = new List<Model>();
@@ -44,14 +45,14 @@ namespace RegularX.Objs_auto
                     obj.Groups[3].Value, obj.Groups[6].Value.ToString(), obj.Groups[8].Value));
                 //Console.WriteLine(g);
                 models.Add(model);
-                model.Print();
+                //model.Print();
             }
-
+            models.RemoveRange(5, models.Count - 5);
             //Добавление объекта в БД????
             return models;
         }
 
-        public static List<Complectation> GetComplectations(string link = "")
+        public static List<Complectation> GetComplectations(string link = "https://www.ilcats.ru/toyota/?function=getComplectations&market=EU&model=671440&startDate=198308&endDate=198903")
         {
             //todo: Convert Link in class
             //todo: Convert period in class
@@ -61,7 +62,7 @@ namespace RegularX.Objs_auto
             {
                 wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
                 //line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getComplectations&amp;market=EU&amp;model=671440&amp;startDate=198308&amp;endDate=198903");
-                line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getComplectations&market=EU&model=671440&startDate=198308&endDate=198903");
+                line = wc.DownloadString(link);
                 line = Program.MyDecoder(line);
             }
             // Разбиение на строки
@@ -99,14 +100,14 @@ namespace RegularX.Objs_auto
             return complectations;
         }
 
-        public static void GetComplGroup(string link = "")
+        public static List<ComplectationGroups> GetComplGroup(string link = "https://www.ilcats.ru/toyota/?function=getGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001")
         {
             List<ComplectationGroups> compGroup = new List<ComplectationGroups>();
             string line = "";
             using (WebClient wc = new WebClient())
             {
                 wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
-                line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001");
+                line = wc.DownloadString(link);
                 line = Program.MyDecoder(line);
             }
             // Выбираем текст для дальнейшей обработки
@@ -123,16 +124,17 @@ namespace RegularX.Objs_auto
             //var cortages = Regex.Matches(line, "<div id='Body' class='ifListBody'>(.*?)<div><div><div></div")
             //    .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
             //cortages.RemoveAt(0); cortages.RemoveRange(5, cortages.Count - 5);
+            return compGroup;
         }
 
-        public static void GetSubGroupCompl(string link = "")
+        public static List<SubGroup> GetSubGroupCompl(string link = "https://www.ilcats.ru/toyota/?function=getSubGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1")
         {
             List<SubGroup> subGroups = new List<SubGroup>();
             string line = "";
             using (WebClient wc = new WebClient())
             {
                 wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
-                line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getSubGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1");
+                line = wc.DownloadString(link);
                 line = Program.MyDecoder(line);
             }
             // Выбираем текст для дальнейшей обработки
@@ -146,11 +148,12 @@ namespace RegularX.Objs_auto
             }
             subGroups.RemoveRange(5, subgroups.Count-5);
             Console.WriteLine();
+            return subGroups;
+
 
         }
 
-
-        public static void GetDetails(string link = "")
+        public static List<Detail> GetDetails(string link = "https://www.ilcats.ru/toyota/?function=getParts&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1&subgroup=1904")
         {
             // Todo: разделение id на старый и новый, навести порядок в коде
             // 
@@ -160,7 +163,7 @@ namespace RegularX.Objs_auto
             using (WebClient wc = new WebClient())
             {
                 wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
-                line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getParts&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1&subgroup=1904");
+                line = wc.DownloadString(link);
                 line = Program.MyDecoder(line);
             }
 
@@ -196,13 +199,19 @@ namespace RegularX.Objs_auto
                     var p = per.Groups[2].Value;
                     var info = Regex.Match(body[3], "<div(.*?)>(.*?)<br />(.*?)</div>");
                     var i = info.Groups[2].Value + "   " +info.Groups[3].Value;
-                    Details.Add(new Detail(id, Convert.ToInt32(cnt.Groups[2].Value), info.Groups[2].Value, tmp_code, tmp_tree, per.Groups[2].Value, lnk));
+                    Details.Add(new Detail(body[0], Convert.ToInt32(cnt.Groups[2].Value), info.Groups[2].Value, tmp_code, tmp_tree, per.Groups[2].Value));
                 }
             }
-
-
+            Console.WriteLine();
+            return Details;
         }
 
+        public static string ConvertPeriod(string raw_period)
+        {
+            string pattern = "&nbsp;";
+            var reg = new Regex(pattern);
+            string period = reg.Replace(raw_period, "");
+            return period;
         }
-
+    }
 }

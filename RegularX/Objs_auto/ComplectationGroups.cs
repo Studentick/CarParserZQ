@@ -14,7 +14,7 @@ namespace RegularX.Objs_auto
         public ComplectationGroups(string name, string link)
         {
             GroupName = name;
-            GroupLink = link;
+            GroupLink = Controller.core_lnk + link;
         }
 
 
