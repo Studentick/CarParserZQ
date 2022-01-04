@@ -33,12 +33,17 @@ namespace RegularX.Objs_auto
             // Разделение на объекты моделей
             var m_l = Regex.Matches(multilist, "<div class='List'>(.*?)</div></div></div></div>")
                 .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
-            //m_l.RemoveRange(5, m_l.Count-6);
-            //Разделение моделей на параметры
-            foreach (var it in m_l)
-            {
+            //m_l.RemoveRange(5, m_l.Count-6);          ^
+            //Разделение моделей на параметры           |
+            foreach (var it in m_l)     //              |
+            {//                                         |
                 // Нужно будет провести чистку ссылки от "защиты" (мусора)
-                var obj = Regex.Match(it + "</div>", Resources.getParams);
+                var obj = Regex.Match(it + "</div></div></div>", Resources.getModName);
+                string model_name = obj.Groups[1].Value;
+                var modells = obj.Groups[2].Value + "</div></div>";
+
+                var m = Regex.Matches(modells, "");
+
                 var g = $"name = { obj.Groups[1].Value} \n link = { obj.Groups[3].Value} \n model_code = {obj.Groups[4].Value}" +
                     $"\nperiod = { obj.Groups[6].Value} \n model = { obj.Groups[8].Value}";
                 // objs.Groups[4].Value = "28B510" - onlyString
@@ -50,6 +55,8 @@ namespace RegularX.Objs_auto
             }
             models.RemoveRange(5, models.Count - 5);
             //Добавление объекта в БД????
+
+
             return models;
         }
 

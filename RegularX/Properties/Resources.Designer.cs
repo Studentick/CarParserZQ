@@ -124,6 +124,24 @@ namespace RegularX.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;div class=&apos;List&apos;&gt;&lt;div class=&apos;id&apos;&gt;&lt;a href=&apos;(gr-lnk)&apos; title=&apos;&apos; target=&apos;&apos;&gt;(.*?)&lt;/a&gt;&lt;/div&gt;&lt;div class=&apos;dateRange&apos;&gt;(.*?)&lt;/div&gt;&lt;div class=&apos;modelCode&apos;&gt;(.*?)&lt;/div&gt;&lt;/div&gt;&lt;div class=&apos;List&apos;&gt;&lt;div class=&apos;id&apos;&gt;&lt;a href=&apos;(.*?)&apos; title=&apos;&apos; target=&apos;&apos;&gt;(.*?)&lt;/a&gt;&lt;/div&gt;&lt;div class=&apos;dateRange&apos;&gt;(.*?)&lt;/div&gt;&lt;div class=&apos;modelCode&apos;&gt;(.*?)&lt;/div&gt;&lt;/div&gt;.
+        /// </summary>
+        internal static string getModels {
+            get {
+                return ResourceManager.GetString("getModels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;div class=&apos;Header&apos;&gt;&lt;div class=&apos;name&apos;&gt;(.*?)&lt;/div&gt;&lt;/div&gt;&lt;div class=&apos;List &apos;&gt;(.*?)&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;.
+        /// </summary>
+        internal static string getModName {
+            get {
+                return ResourceManager.GetString("getModName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на &lt;div class=&apos;name&apos;&gt;(.*?)&lt;/div&gt;(.*?)&lt;div class=&apos;id&apos;&gt;&lt;a href=&apos;(.*?)&apos; title=&apos;&apos; target=&apos;&apos;&gt;(.*?)&lt;/a&gt;&lt;/div&gt;(.*?)&lt;div class=&apos;dateRange&apos;&gt;(.*?)&lt;/div&gt;(.*?)&lt;div class=&apos;modelCode&apos;&gt;(.*?)&lt;/div&gt;.
         /// </summary>
         internal static string getParams {
