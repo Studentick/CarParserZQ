@@ -16,6 +16,21 @@ namespace RegularX.Objs_auto
         public string Period { get; }
         public string Complectation { get; }
 
+        public List<Complectation> ComplectationsList
+        {
+            get
+            {
+                return complectationsList;
+            }
+
+            private set
+            {
+                complectationsList = value;
+            }
+        }
+
+        private List<Complectation> complectationsList;
+
         public Model(string modelCode, string name, string link, string period, string compl)
         {
             ModelCode = modelCode;
@@ -23,6 +38,12 @@ namespace RegularX.Objs_auto
             Link = Controller.core_lnk + link;
             Period = Controller.ConvertPeriod(period);
             Complectation = compl;
+            complectationsList = new List<Complectation>();
+        }
+
+        public void SetComplList(List<Complectation> complectationList)
+        {
+            this.complectationsList.AddRange(complectationList);
         }
 
         public void Print()

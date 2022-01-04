@@ -42,16 +42,23 @@ namespace RegularX.Objs_auto
                 string model_name = obj.Groups[1].Value;
                 var modells = obj.Groups[2].Value + "</div></div>";
 
-                var m = Regex.Matches(modells, "");
+                var m = Regex.Matches(modells, Resources.getModels);
 
-                var g = $"name = { obj.Groups[1].Value} \n link = { obj.Groups[3].Value} \n model_code = {obj.Groups[4].Value}" +
-                    $"\nperiod = { obj.Groups[6].Value} \n model = { obj.Groups[8].Value}";
-                // objs.Groups[4].Value = "28B510" - onlyString
-                var model = (new Model(obj.Groups[4].Value, obj.Groups[1].Value,
-                    obj.Groups[3].Value, obj.Groups[6].Value.ToString(), obj.Groups[8].Value));
-                //Console.WriteLine(g);
-                models.Add(model);
-                //model.Print();
+                foreach(Match it_model in m)
+                {
+                    models.Add(new Model(it_model.Groups[2].Value, model_name, it_model.Groups[1].Value,
+                        it_model.Groups[3].Value, it_model.Groups[4].Value));
+                }
+
+
+                //var g = $"name = { obj.Groups[1].Value} \n link = { obj.Groups[3].Value} \n model_code = {obj.Groups[4].Value}" +
+                //    $"\nperiod = { obj.Groups[6].Value} \n model = { obj.Groups[8].Value}";
+                //// objs.Groups[4].Value = "28B510" - onlyString
+                //var model = (new Model(obj.Groups[4].Value, obj.Groups[1].Value,
+                //    obj.Groups[3].Value, obj.Groups[6].Value.ToString(), obj.Groups[8].Value));
+                ////Console.WriteLine(g);
+                //models.Add(model);
+                ////model.Print();
             }
             models.RemoveRange(5, models.Count - 5);
             //Добавление объекта в БД????

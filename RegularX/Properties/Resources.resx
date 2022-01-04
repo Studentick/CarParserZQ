@@ -151,9 +151,11 @@
     <value />
   </data>
   <data name="getModels" xml:space="preserve">
-    <value>&lt;div class='List'&gt;&lt;div class='id'&gt;&lt;a href='(gr-lnk)' title='' target=''&gt;(.*?)&lt;/a&gt;&lt;/div&gt;&lt;div class='dateRange'&gt;(.*?)&lt;/div&gt;&lt;div class='modelCode'&gt;(.*?)&lt;/div&gt;&lt;/div&gt;&lt;div class='List'&gt;&lt;div class='id'&gt;&lt;a href='(.*?)' title='' target=''&gt;(.*?)&lt;/a&gt;&lt;/div&gt;&lt;div class='dateRange'&gt;(.*?)&lt;/div&gt;&lt;div class='modelCode'&gt;(.*?)&lt;/div&gt;&lt;/div&gt;</value>
+    <value>&lt;div class='List'&gt;&lt;div class='id'&gt;&lt;a href='(.*?)' title='' target=''&gt;(.*?)&lt;/a&gt;&lt;/div&gt;&lt;div class='dateRange'&gt;(.*?)&lt;/div&gt;&lt;div class='modelCode'&gt;(.*?)&lt;/div&gt;&lt;/div&gt;</value>
+    <comment>Получение моделей автомобилей</comment>
   </data>
   <data name="getModName" xml:space="preserve">
     <value>&lt;div class='Header'&gt;&lt;div class='name'&gt;(.*?)&lt;/div&gt;&lt;/div&gt;&lt;div class='List '&gt;(.*?)&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</value>
+    <comment>Получение имён моделей</comment>
   </data>
 </root>
