@@ -14,9 +14,12 @@ namespace RegularX.Objs_auto
     // Переделать первую страницу для разбивки модели на части
     class Controller
     {
+        static public int c_left = 0, c_top = 0; 
+        static public List<string> ComplectsParas;
         public const string core_lnk = "https://www.ilcats.ru";
         public static List<Model> GetModels(string link = "https://www.ilcats.ru/toyota/?function=getModels&market=EU")
         {
+            ComplectsParas = new List<string>();
             List<Model> models = new List<Model>();
             string line = "";
             using (WebClient wc = new WebClient())
@@ -33,7 +36,7 @@ namespace RegularX.Objs_auto
             // Разделение на объекты моделей
             var m_l = Regex.Matches(multilist, "<div class='List'>(.*?)</div></div></div></div>")
                 .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
-            //m_l.RemoveRange(5, m_l.Count-6);          ^
+            //m_l.RemoveRange(5, m_l.Count-6);          /\
             //Разделение моделей на параметры           |
             foreach (var it in m_l)     //              |
             {//                                         |
@@ -49,25 +52,36 @@ namespace RegularX.Objs_auto
                     models.Add(new Model(it_model.Groups[2].Value, model_name, it_model.Groups[1].Value,
                         it_model.Groups[3].Value, it_model.Groups[4].Value));
                 }
-
-
-                //var g = $"name = { obj.Groups[1].Value} \n link = { obj.Groups[3].Value} \n model_code = {obj.Groups[4].Value}" +
-                //    $"\nperiod = { obj.Groups[6].Value} \n model = { obj.Groups[8].Value}";
-                //// objs.Groups[4].Value = "28B510" - onlyString
-                //var model = (new Model(obj.Groups[4].Value, obj.Groups[1].Value,
-                //    obj.Groups[3].Value, obj.Groups[6].Value.ToString(), obj.Groups[8].Value));
-                ////Console.WriteLine(g);
-                //models.Add(model);
-                ////model.Print();
+                
             }
-            models.RemoveRange(5, models.Count - 5);
+            //models.RemoveRange(5, models.Count - 5);
+            WritePercent();
+            Console.WriteLine("Прогресс:");
+            int c_len = Console.WindowWidth;
+            for (int i = 0; i < c_len; i++ )
+            {
+                Console.Write("▒");
+            }
+
+            int pos_left = Console.CursorLeft;
+            var pos_top = Console.CursorTop;
+
+            foreach (var model in models)
+            {
+                model.InsertIntoDB();
+                var c1 = GetComplectations(model.Link, model.ModelCode);
+                //model.complectationsList.AddRange();
+                Console.WriteLine($"{model.ModelCode} parced");
+
+            }
             //Добавление объекта в БД????
-
-
+            List<string> new_lst = ComplectsParas.Distinct().ToList();
+            string tmp = string.Join(Environment.NewLine, new_lst);
+            //ComplectsParas = new List<string>().AddRange(ComplectsParas.Distinct().ToList());
             return models;
         }
 
-        public static List<Complectation> GetComplectations(string link = "https://www.ilcats.ru/toyota/?function=getComplectations&market=EU&model=671440&startDate=198308&endDate=198903")
+        public static List<Complectation> GetComplectations(string link = "https://www.ilcats.ru/toyota/?function=getComplectations&market=EU&model=671440&startDate=198308&endDate=198903", string parrent_id = null)
         {
             //todo: Convert Link in class
             //todo: Convert period in class
@@ -83,13 +97,17 @@ namespace RegularX.Objs_auto
             // Разбиение на строки
             var cortages = Regex.Matches(line, "<tr>(.*?)</tr>")
                 .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
-            cortages.RemoveAt(0); cortages.RemoveRange(5, cortages.Count - 5);
+            //cortages.RemoveAt(0);
+            cortages.RemoveRange(1, cortages.Count - 1);
 
             // Пожертвовал оптимизацией ради читабельности кода
             foreach(var row in cortages)
             {
                 List<string> complect = new List<string>();
-                var collumns = Regex.Matches(row, "<td>(.*?)</td>").Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
+                var collumns = Regex.Matches(row, "<th>(.*?)</th>").Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
+                //var collumns = Regex.Matches(row, "<td>(.*?)</td>").Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
+                ComplectsParas.AddRange(collumns);
+                goto metka1;
                 int len = collumns.Count;
                 for (int i = 0; i < len - 1; i++)
                 {
@@ -111,7 +129,9 @@ namespace RegularX.Objs_auto
                 complectations.Add(new Complectation(complect[0],complect[1], complect[2],
                     complect[3], complect[4]));
             }
-            //Console.WriteLine();
+            metka1:
+            Console.WriteLine();
+
             return complectations;
         }
 
@@ -227,6 +247,17 @@ namespace RegularX.Objs_auto
             var reg = new Regex(pattern);
             string period = reg.Replace(raw_period, "");
             return period;
+        }
+
+        static void WritePercent()
+        {
+            Console.WriteLine("str-1");
+            int pos_left = Console.CursorLeft;
+            var pos_top = Console.CursorTop;
+            Console.WriteLine("str-2");
+            Console.WriteLine("   ");
+
+            Console.SetCursorPosition(pos_left, pos_top);
         }
     }
 }

@@ -16,20 +16,7 @@ namespace RegularX.Objs_auto
         public string Period { get; }
         public string Complectation { get; }
 
-        public List<Complectation> ComplectationsList
-        {
-            get
-            {
-                return complectationsList;
-            }
-
-            private set
-            {
-                complectationsList = value;
-            }
-        }
-
-        private List<Complectation> complectationsList;
+        public List<Complectation> complectationsList;
 
         public Model(string modelCode, string name, string link, string period, string compl)
         {
