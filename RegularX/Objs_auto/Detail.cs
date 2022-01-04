@@ -29,8 +29,6 @@ namespace RegularX.Objs_auto
             ConvertCode(code);
         }
 
-        
-
         protected void ConvertCode(string raw_code)
         {
             string pattern = "replaceNumber";
@@ -57,7 +55,12 @@ namespace RegularX.Objs_auto
             }
         }
 
-
+        public void InsertToDB(string parrent_id)
+        {
+            // "insert into Details (sub_group_id, tree_code, tree, code, old_code, count, 
+            // period, info, link, old_link) values (@sub_group_id, @tree_code, tree, code, 
+            // @old_code, @count, @period, @info, @link, @old_link)";
+        }
 
     }
 }

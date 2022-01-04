@@ -40,6 +40,15 @@ namespace RegularX.Objs_auto
             return "";
         }
 
+        public void SetComplectations()
+        {
+
+        }
+
+        public void InsertIntoDB()
+        {
+
+        }
 
     }
 }

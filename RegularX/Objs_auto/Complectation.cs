@@ -36,6 +36,15 @@ namespace RegularX.Objs_auto
             Body = body;
         }
 
+        public void SetGroups()
+        {
+
+        }
+
+        public void InsertIntoDB()
+        {
+
+        }
 
     }
 }

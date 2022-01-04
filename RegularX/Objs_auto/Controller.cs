@@ -11,6 +11,7 @@ namespace RegularX.Objs_auto
 {
     // Пофиксить ссылки
     // Сделать проверку получения результата от сайта
+    // Переделать первую страницу для разбивки модели на части
     class Controller
     {
         public const string core_lnk = "https://www.ilcats.ru";
