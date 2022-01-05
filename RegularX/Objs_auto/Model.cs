@@ -42,37 +42,24 @@ namespace RegularX.Objs_auto
 
         private string ConvertLink(string inp)
         {
-            var m = Regex.Match(inp, "(.*?)&market=EU&model=(.*?)&startDate=(.*?)&endDate=(.*?)$");
-            string startDate_1 = m.Groups[3].Value;
-            string endDate_1 = m.Groups[4].Value;
-            string model_1 = m.Groups[2].Value;
-
-            var m1 = Regex.Match(inp, "(.*?)&market=(.*?)&(.*?)$");
-
-
-            var startDate_2 = new Regex("startDate=" + startDate_1);
-            inp = startDate_2.Replace(inp, "startDate=" + Period.Substring(3,4) + Period.Substring(0, 2));
-
-            var endDate_2 = new Regex("endDate=" + endDate_1);
-            inp = endDate_2.Replace(inp, "endDate=" + Period.Substring(11, 4) + Period.Substring(8, 2));
-
-            var model_2 = new Regex("model=" + model_1);
-            inp = model_2.Replace(inp, "model=" + ModelCode);
-            ConvertLink1(inp);
-            return Controller.core_lnk + inp;
-        }
-
-        private string ConvertLink1(string inp)
-        {
+            string model = ""; string startDate = ""; string endDate = "";
             var m1 = Regex.Match(inp, "(.*?)&market=(.*?)&(.*?)$");
 
             string market = m1.Groups[2].Value;
-            string startDate_1 = m1.Groups[3].Value;
+            string postfix_1 = m1.Groups[3].Value;
 
-            var startDate_2 = new Regex(startDate_1);
-            string new_str = "model=" + ModelCode + "&startDate =" + Period.Substring(3, 4) + Period.Substring(0, 2)+
-                "endDate=" + Period.Substring(11, 4) + Period.Substring(8, 2);
-            inp = startDate_2.Replace(inp, "");
+            var _postfix = new Regex(postfix_1);
+
+            model = "model=" + ModelCode;
+            startDate = "startDate=" + Period.Substring(3, 4) + Period.Substring(0, 2);
+            try { endDate = "&endDate=" + Period.Substring(11, 4) + Period.Substring(8, 2); } catch (Exception) { endDate = ""; }
+
+            string postfix_2 = $"{model}&{startDate}{endDate}";
+
+            // На всякий случай:
+            // postfix_2 = postfix_2 +( endDate != "" ? /*"&" +*/ endDate : "");
+
+            inp = _postfix.Replace(inp, postfix_2);
 
             return Controller.core_lnk + inp;
         }

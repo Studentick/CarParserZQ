@@ -58,6 +58,8 @@ namespace RegularX.Objs_auto
 
             models.RemoveRange(5, models.Count - 5);
 
+            Console.WriteLine("Test");
+
             // Установка прогрес-бара
             // ==================================================
             ConsoleProgressBar cpb = new ConsoleProgressBar();
