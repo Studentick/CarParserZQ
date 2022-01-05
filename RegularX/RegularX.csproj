@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleProgressBar.cs" />
     <Compile Include="Objs_auto\Complectation.cs" />
     <Compile Include="Objs_auto\ComplectationGroups.cs" />
     <Compile Include="Objs_auto\Controller.cs" />

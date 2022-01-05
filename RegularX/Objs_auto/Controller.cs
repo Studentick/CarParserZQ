@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RegularX.Objs_auto
@@ -54,26 +55,25 @@ namespace RegularX.Objs_auto
                 }
                 
             }
-            //models.RemoveRange(5, models.Count - 5);
-            WritePercent();
-            Console.WriteLine("Прогресс:");
-            int c_len = Console.WindowWidth;
-            for (int i = 0; i < c_len; i++ )
-            {
-                Console.Write("▒");
-            }
-
-            int pos_left = Console.CursorLeft;
-            var pos_top = Console.CursorTop;
-
+                        
+            // Установка прогрес-бара
+            // ==================================================
+            ConsoleProgressBar cpb = new ConsoleProgressBar();
+            Console.WriteLine("Прогресс:\n");
+            cpb.WritePercent(0, 100, false);
+            int step = 0;
             foreach (var model in models)
             {
                 model.InsertIntoDB();
                 var c1 = GetComplectations(model.Link, model.ModelCode);
-                //model.complectationsList.AddRange();
-                Console.WriteLine($"{model.ModelCode} parced");
-
+                model.complectationsList.AddRange(c1);
+                Console.Write($"{model.ModelCode} parced;\t");
+                cpb.WritePercent(step, models.Count);
+                step++;
+                Thread.Sleep(2000);
             }
+            // ==================================================
+            Console.WriteLine();
             //Добавление объекта в БД????
             List<string> new_lst = ComplectsParas.Distinct().ToList();
             string tmp = string.Join(Environment.NewLine, new_lst);
@@ -130,7 +130,7 @@ namespace RegularX.Objs_auto
                     complect[3], complect[4]));
             }
             metka1:
-            Console.WriteLine();
+            //Console.WriteLine();
 
             return complectations;
         }
@@ -249,15 +249,6 @@ namespace RegularX.Objs_auto
             return period;
         }
 
-        static void WritePercent()
-        {
-            Console.WriteLine("str-1");
-            int pos_left = Console.CursorLeft;
-            var pos_top = Console.CursorTop;
-            Console.WriteLine("str-2");
-            Console.WriteLine("   ");
-
-            Console.SetCursorPosition(pos_left, pos_top);
-        }
+        
     }
 }
