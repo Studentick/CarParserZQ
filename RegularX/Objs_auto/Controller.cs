@@ -38,9 +38,9 @@ namespace RegularX.Objs_auto
             var m_l = Regex.Matches(multilist, "<div class='List'>(.*?)</div></div></div></div>")
                 .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
             //m_l.RemoveRange(5, m_l.Count-6);          /\
-            //Разделение моделей на параметры           |
-            foreach (var it in m_l)     //              |
-            {//                                         |
+            //Разделение моделей на параметры          /||
+            foreach (var it in m_l)     //              ||
+            {//                                         ||
                 // Нужно будет провести чистку ссылки от "защиты" (мусора)
                 var obj = Regex.Match(it + "</div></div></div>", Resources.getModName);
                 string model_name = obj.Groups[1].Value;
@@ -55,7 +55,9 @@ namespace RegularX.Objs_auto
                 }
                 
             }
-                        
+
+            models.RemoveRange(5, models.Count - 5);
+
             // Установка прогрес-бара
             // ==================================================
             ConsoleProgressBar cpb = new ConsoleProgressBar();
@@ -70,7 +72,7 @@ namespace RegularX.Objs_auto
                 Console.Write($"{model.ModelCode} parced;\t");
                 cpb.WritePercent(step, models.Count);
                 step++;
-                Thread.Sleep(2000);
+                Thread.Sleep(2500);
             }
             // ==================================================
             Console.WriteLine();
@@ -89,7 +91,9 @@ namespace RegularX.Objs_auto
             string line = "";
             using (WebClient wc = new WebClient())
             {
-                wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
+                //wc.Proxy = new WebProxy("92.255.202.72", 4145);
+                link = "https://www.google.com/";
+                //wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
                 //line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getComplectations&amp;market=EU&amp;model=671440&amp;startDate=198308&amp;endDate=198903");
                 line = wc.DownloadString(link);
                 line = Program.MyDecoder(line);
