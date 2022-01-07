@@ -158,5 +158,14 @@ namespace RegularX.Properties {
                 return ResourceManager.GetString("getSubGroups", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &lt;div class=&apos;List&apos;&gt;&lt;div class=&apos;image&apos;&gt;&lt;a href=&apos;(.*?)&apos; \s(.*?)&gt;&lt;img src=&apos;(.*?)&apos; alt=&apos;(.*?)\s(.*?)\s(.*?)&apos;&gt;(.*?)&lt;div class=&apos;name&apos;&gt;&lt;a href=&apos;(.*?)&apos; \s(.*?)&gt;(.*?)&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;.
+        /// </summary>
+        internal static string getSubGroups1 {
+            get {
+                return ResourceManager.GetString("getSubGroups1", resourceCulture);
+            }
+        }
     }
 }

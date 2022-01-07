@@ -38,10 +38,10 @@ namespace RegularX.Objs_auto
             var m_l = Regex.Matches(multilist, "<div class='List'>(.*?)</div></div></div></div>")
                 .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
             //m_l.RemoveRange(5, m_l.Count-6);          /\
-            //Разделение моделей на параметры          /||
+            //Разделение моделей на параметры          /||\
             foreach (var it in m_l)     //              ||
             {//                                         ||
-                // Нужно будет провести чистку ссылки от "защиты" (мусора)
+                // Нужно будет провести чистку ссылки от||"защиты" (мусора)
                 var obj = Regex.Match(it + "</div></div></div>", Resources.getModName);
                 string model_name = obj.Groups[1].Value;
                 var modells = obj.Groups[2].Value + "</div></div>";
@@ -57,8 +57,7 @@ namespace RegularX.Objs_auto
             }
 
             models.RemoveRange(5, models.Count - 5);
-
-            Console.WriteLine("Test");
+            
 
             // Установка прогрес-бара
             // ==================================================
@@ -79,69 +78,83 @@ namespace RegularX.Objs_auto
             // ==================================================
             Console.WriteLine();
             //Добавление объекта в БД????
-            List<string> new_lst = ComplectsParas.Distinct().ToList();
-            string tmp = string.Join(Environment.NewLine, new_lst);
+
+            //List<string> new_lst = ComplectsParas.Distinct().ToList();
+            //string tmp = string.Join(Environment.NewLine, new_lst);
+
             //ComplectsParas = new List<string>().AddRange(ComplectsParas.Distinct().ToList());
             return models;
         }
 
-        public static List<Complectation> GetComplectations(string link = "https://www.ilcats.ru/toyota/?function=getComplectations&market=EU&model=671440&startDate=198308&endDate=198903", string parrent_id = null)
+        public static List<Complectation> GetComplectations(string link = "https://www.ilcats.ru/toyota/?function=getComplectations&market=EU&model=671440&startDate=198308&endDate=198903", 
+            string parrent_id = null)
         {
-            //todo: Convert Link in class
-            //todo: Convert period in class
             List<Complectation> complectations = new List<Complectation>();
             string line = "";
             using (WebClient wc = new WebClient())
             {
                 //wc.Proxy = new WebProxy("92.255.202.72", 4145);
-                link = "https://www.google.com/";
-                //wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
-                //line = wc.DownloadString("https://www.ilcats.ru/toyota/?function=getComplectations&amp;market=EU&amp;model=671440&amp;startDate=198308&amp;endDate=198903");
+                //link = "https://www.google.com/";
+                wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
                 line = wc.DownloadString(link);
                 line = Program.MyDecoder(line);
             }
             // Разбиение на строки
+            var line1 = Regex.Match(line, "(.*?)<table(.*?)>(.*?)</table>(.*?)").Groups[3].Value;
+            line = line1;
             var cortages = Regex.Matches(line, "<tr>(.*?)</tr>")
                 .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
-            //cortages.RemoveAt(0);
-            cortages.RemoveRange(1, cortages.Count - 1);
 
+            List<string> keys = new List<string>();
+            int counter = 0;
             // Пожертвовал оптимизацией ради читабельности кода
             foreach(var row in cortages)
             {
-                List<string> complect = new List<string>();
-                var collumns = Regex.Matches(row, "<th>(.*?)</th>").Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
-                //var collumns = Regex.Matches(row, "<td>(.*?)</td>").Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
-                ComplectsParas.AddRange(collumns);
-                goto metka1;
-                int len = collumns.Count;
-                for (int i = 0; i < len - 1; i++)
+                if (counter == 0)
                 {
-                    if (i==0)
-                    {
-                        // Получение id и ссылки
-                        var id_lnk = Regex.Match(collumns[i], Resources.getComplIdLnk);
-                        complect.Add(id_lnk.Groups[4].Value);
-                        complect.Add(id_lnk.Groups[2].Value);
-                    }
-                    else
+                    keys = Regex.Matches(row, "<th>(.*?)</th>").Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
+                }
+                else
+                {
+                    List<string> valuesList = new List<string>();
+                    var raw_values = Regex.Matches(row, "<td>(.*?)</td>").Cast<Match>()
+                        .Select(x => x.Groups[1].Value).ToList<string>();
+                    // Отладку довести сюда
+                    int _len = raw_values.Count;
+                    for (int i = 1; i < _len; i++)
                     {
                         // Получение всего остального
-                        var param = Regex.Match(collumns[i], Resources.getComplParam);
-                        complect.Add(param.Groups[2].Value);
+                        var param = Regex.Match(raw_values[i], Resources.getComplParam);
+                        valuesList.Add(param.Groups[2].Value);
                     }
+                    var _id_lnk = Regex.Match(raw_values[0], Resources.getComplIdLnk);
+                    string _modification = _id_lnk.Groups[4].Value;
+                    string _lnk = _id_lnk.Groups[2].Value;
+
+                    var compl_params = keys.GetRange(2, keys.Count-2).Zip(valuesList.GetRange(1, valuesList.Count-1), (k, v) => 
+                    new { Key = k, Value = v }).ToDictionary(x => x.Key, x => x.Value);
+
+                    complectations.Add(
+                        new Complectation(parrent_id, _modification, _lnk, valuesList[0], compl_params, counter));
                 }
-                //Console.WriteLine();
-                complectations.Add(new Complectation(complect[0],complect[1], complect[2],
-                    complect[3], complect[4]));
+                counter++;
             }
-            metka1:
-            //Console.WriteLine();
+            complectations.RemoveRange(5, complectations.Count-5);
+
+            foreach (var complect in complectations)
+            {
+                complect.InsertIntoDB();
+                var c1 = GetComplGroup(complect.Link, complect.Modification);
+                complect.complectationGroups.AddRange(c1);
+                Thread.Sleep(1500);
+            }
+
 
             return complectations;
         }
 
-        public static List<ComplectationGroups> GetComplGroup(string link = "https://www.ilcats.ru/toyota/?function=getGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001")
+        public static List<ComplectationGroups> GetComplGroup(string link = "https://www.ilcats.ru/toyota/?function=getGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001",
+            string modif = "")
         {
             List<ComplectationGroups> compGroup = new List<ComplectationGroups>();
             string line = "";
@@ -157,18 +170,28 @@ namespace RegularX.Objs_auto
             var groups = Regex.Matches(groups_str, Resources.getGroups);
             var a = groups[0].Groups[0].Value;
 
+            int group_id = 1;
             foreach (Match group in groups)
             {
-                compGroup.Add(new ComplectationGroups(group.Groups[4].Value, group.Groups[2].Value));
+                compGroup.Add(new ComplectationGroups(group.Groups[4].Value, link, modif, group_id));
+                //compGroup.Clear();
+                group_id++;
             }
 
-            //var cortages = Regex.Matches(line, "<div id='Body' class='ifListBody'>(.*?)<div><div><div></div")
-            //    .Cast<Match>().Select(x => x.Groups[1].Value).ToList<string>();
-            //cortages.RemoveAt(0); cortages.RemoveRange(5, cortages.Count - 5);
+            foreach (var group in compGroup)
+            {
+                group.InsertIntoDB();
+                var c1 = GetSubGroupCompl(group.GroupLink, group.Modification);
+                group.subgroups.AddRange(c1);
+                Thread.Sleep(1500);
+            }
+
+
             return compGroup;
         }
 
-        public static List<SubGroup> GetSubGroupCompl(string link = "https://www.ilcats.ru/toyota/?function=getSubGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1")
+        public static List<SubGroup> GetSubGroupCompl(string link = "https://www.ilcats.ru/toyota/?function=getSubGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1",
+            string modif = "")
         {
             List<SubGroup> subGroups = new List<SubGroup>();
             string line = "";
@@ -181,17 +204,24 @@ namespace RegularX.Objs_auto
             // Выбираем текст для дальнейшей обработки
             var subgroups_str = Regex.Match(line, "<div class='Tiles'><div class='List '>(.*?)</div></div></div></div>").Groups[1].Value + "</div>" + "</div>";
 
-            var subgroups = Regex.Matches(subgroups_str, Resources.getSubGroups);
+            //string tst = @"<div class='List'><div class='image'><a href='(.*?)'\s(.*?)><img src='(.*?)'\salt='(.*?)'>(.*?)<div class='name'><a href='(.*?)' \s(.*?)>(.*?)</a></div></div>";
+            string tst = @"<div class='List'><div class='image'><a href='(.*?)'\s(.*?)><img src='(.*?)' alt='(.*?)\s(.*?)\s(.*?)'>(.*?)<div class='name'><a href='(.*?)'\s(.*?)>(.*?)</a></div></div>";
+            var subgroups = Regex.Matches(subgroups_str, tst);
 
             foreach(Match subgroup in subgroups)
             {
-                subGroups.Add(new SubGroup(subgroup.Groups[7].Value, subgroup.Groups[5].Value));
+                //var gg = subgroup.Groups[0].Value;
+                //string sg = subgroup.Groups[5].Value;
+                //subGroups.Add(new SubGroup(subgroup.Groups[7].Value, subgroup.Groups[5].Value));
+                subGroups.Add(new SubGroup(subgroup.Groups[10].Value, link, subgroup.Groups[5].Value));
+                //subGroups.Clear();
             }
             subGroups.RemoveRange(5, subgroups.Count-5);
             Console.WriteLine();
+
+            // Остановился тут. Нужно сделать обход защиты страници деталей
+
             return subGroups;
-
-
         }
 
         public static List<Detail> GetDetails(string link = "https://www.ilcats.ru/toyota/?function=getParts&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1&subgroup=1904")

@@ -70,6 +70,8 @@
   <ItemGroup>
     <Content Include="HTMLPage1.html" />
     <Content Include="HTMLPage2.html" />
+    <Content Include="HTMLPage3.html" />
+    <Content Include="HTMLPage4.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
