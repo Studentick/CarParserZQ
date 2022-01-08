@@ -1,6 +1,9 @@
 ﻿using RegularX.Properties;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -16,6 +19,10 @@ namespace RegularX.Objs_auto
     // Переделать первую страницу для разбивки модели на части
     class Controller
     {
+        // DataBase
+        public static string con_str = ConfigurationManager.ConnectionStrings["CatalogDB"].ConnectionString;
+        public static SqlConnection sqlConnection;
+
         static public int c_left = 0, c_top = 0; 
         static public List<string> ComplectsParas;
         public const string core_lnk = "https://www.ilcats.ru";
@@ -30,6 +37,15 @@ namespace RegularX.Objs_auto
             clock.Stop();
             clll.Add(Convert.ToString(clock.ElapsedMilliseconds));
             return g;
+        }
+
+        public static void CheckConnectionDB()
+        {
+            if (sqlConnection == null || sqlConnection.State != ConnectionState.Open)
+            {
+                sqlConnection = new SqlConnection(con_str);
+                sqlConnection.Open();
+            }
         }
 
         public static List<Model> GetModels(string link = "https://www.ilcats.ru/toyota/?function=getModels&market=EU")

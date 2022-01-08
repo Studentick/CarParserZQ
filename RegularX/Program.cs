@@ -27,10 +27,10 @@ namespace RegularX
             //Console.WriteLine(); Console.WriteLine(); Console.WriteLine(); Console.WriteLine(); Console.WriteLine();
             //Controller.clock.Stop();
             //Console.WriteLine(Controller.clock.ElapsedMilliseconds);
-            
+
 
             //ss = Decoder(ss);
-
+            Controller.CheckConnectionDB();
             var a = Controller.GetModels();
 
 
