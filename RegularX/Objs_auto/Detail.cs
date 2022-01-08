@@ -25,8 +25,9 @@ namespace RegularX.Objs_auto
         public Detail(string code, int count, string info, string tree_code, string tree, string period)
         {
             Count = count; Info = info; Tree_Code = tree_code;
-            Tree = tree;  Period = period; OldLink = OldLink;
+            Tree = tree;  Period = Controller.ConvertPeriod(period); OldLink = OldLink;
             ConvertCode(code);
+            Controller.detail_codes.Add(Code);
         }
 
         protected void ConvertCode(string raw_code)
@@ -55,7 +56,7 @@ namespace RegularX.Objs_auto
             }
         }
 
-        public void InsertToDB(string parrent_id)
+        public void InsertToDB(/*string parrent_id*/)
         {
             // "insert into Details (sub_group_id, tree_code, tree, code, old_code, count, 
             // period, info, link, old_link) values (@sub_group_id, @tree_code, tree, code, 

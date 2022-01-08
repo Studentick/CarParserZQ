@@ -12,7 +12,7 @@ namespace RegularX.Objs_auto
         public string Name { get; }
         public string Link { get; }
 
-        List<Detail> details;
+        public List<Detail> details;
 
         public SubGroup(string name, string link, string sg_code)
         {
@@ -26,7 +26,7 @@ namespace RegularX.Objs_auto
             //this.details.AddRange(details);
         }
 
-        public void InsertIntoDB(string parrent_id)
+        public void InsertIntoDB(/*string parrent_id*/)
         {
             //Insert into SubGroups(groups_id, name, link)
 

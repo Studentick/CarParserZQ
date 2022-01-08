@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RegularX
@@ -20,6 +21,12 @@ namespace RegularX
             //var gg = Controller.GetModels();
 
             //string ss = "Р’С‹Р±РѕСЂ РєРѕРјРїР»РµРєС‚Р°С†РёРё Р°РІС‚РѕРјРѕР±РёР»СЏ";
+
+            //Controller.clock.Restart();
+            //Thread.Sleep(5000);
+            //Console.WriteLine(); Console.WriteLine(); Console.WriteLine(); Console.WriteLine(); Console.WriteLine();
+            //Controller.clock.Stop();
+            //Console.WriteLine(Controller.clock.ElapsedMilliseconds);
             
 
             //ss = Decoder(ss);

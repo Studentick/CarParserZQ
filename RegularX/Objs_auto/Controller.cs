@@ -1,6 +1,7 @@
 ﻿using RegularX.Properties;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -18,6 +19,19 @@ namespace RegularX.Objs_auto
         static public int c_left = 0, c_top = 0; 
         static public List<string> ComplectsParas;
         public const string core_lnk = "https://www.ilcats.ru";
+        static public List<string> detail_codes = new List<string>();
+        public static Stopwatch clock = new Stopwatch(); // 123123123123123123123
+        public static List<string> clll = new List<string>();
+
+        public static string DebugStr(string link, WebClient wc)
+        {
+            clock.Restart();
+            var g = wc.DownloadString(link); ;
+            clock.Stop();
+            clll.Add(Convert.ToString(clock.ElapsedMilliseconds));
+            return g;
+        }
+
         public static List<Model> GetModels(string link = "https://www.ilcats.ru/toyota/?function=getModels&market=EU")
         {
             ComplectsParas = new List<string>();
@@ -25,7 +39,7 @@ namespace RegularX.Objs_auto
             string line = "";
             using (WebClient wc = new WebClient())
             {
-                line = wc.DownloadString(link);
+                line = DebugStr(link, wc);
             }
 
             //Match match = Regex.Match(line, "<div class=\"List Multilist\">(.*?)</div>");
@@ -56,8 +70,9 @@ namespace RegularX.Objs_auto
                 
             }
 
-            models.RemoveRange(5, models.Count - 5);
-            
+            models.RemoveRange(3, models.Count - 3);
+            Console.WriteLine("Drop models");
+              
 
             // Установка прогрес-бара
             // ==================================================
@@ -73,11 +88,16 @@ namespace RegularX.Objs_auto
                 Console.Write($"{model.ModelCode} parced;\t");
                 cpb.WritePercent(step, models.Count);
                 step++;
-                Thread.Sleep(2500);
+                Thread.Sleep(2500); // Для обхода защиты сайта.
             }
             // ==================================================
             Console.WriteLine();
-            //Добавление объекта в БД????
+            // ==================================================
+            // Debug code
+            //var g1 = detail_codes.Count;
+            //List<string> result2 = detail_codes.Distinct().ToList();
+            //var g2 = result2.Count;
+            // ==================================================
 
             //List<string> new_lst = ComplectsParas.Distinct().ToList();
             //string tmp = string.Join(Environment.NewLine, new_lst);
@@ -96,7 +116,9 @@ namespace RegularX.Objs_auto
                 //wc.Proxy = new WebProxy("92.255.202.72", 4145);
                 //link = "https://www.google.com/";
                 wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
-                line = wc.DownloadString(link);
+                Console.Write("(");
+                line = DebugStr(link, wc);
+                Console.Write(")");
                 line = Program.MyDecoder(line);
             }
             // Разбиение на строки
@@ -139,14 +161,15 @@ namespace RegularX.Objs_auto
                 }
                 counter++;
             }
-            complectations.RemoveRange(5, complectations.Count-5);
+            complectations.RemoveRange(3, complectations.Count-3);
+            //Console.WriteLine("Drop complectations");
 
             foreach (var complect in complectations)
             {
                 complect.InsertIntoDB();
                 var c1 = GetComplGroup(complect.Link, complect.Modification);
                 complect.complectationGroups.AddRange(c1);
-                Thread.Sleep(1500);
+                Thread.Sleep(2500); // Для обхода защиты сайта.
             }
 
 
@@ -161,7 +184,9 @@ namespace RegularX.Objs_auto
             using (WebClient wc = new WebClient())
             {
                 wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
-                line = wc.DownloadString(link);
+                Console.Write("|");
+                line = DebugStr(link, wc);
+                Console.Write("|");
                 line = Program.MyDecoder(line);
             }
             // Выбираем текст для дальнейшей обработки
@@ -178,12 +203,14 @@ namespace RegularX.Objs_auto
                 group_id++;
             }
 
+            //Console.WriteLine("Don't drop groups");
+
             foreach (var group in compGroup)
             {
                 group.InsertIntoDB();
                 var c1 = GetSubGroupCompl(group.GroupLink, group.Modification);
                 group.subgroups.AddRange(c1);
-                Thread.Sleep(1500);
+                Thread.Sleep(2500); // Для обхода защиты сайта.
             }
 
 
@@ -198,9 +225,18 @@ namespace RegularX.Objs_auto
             using (WebClient wc = new WebClient())
             {
                 wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
-                line = wc.DownloadString(link);
+                Console.Write("{");
+                line = DebugStr(link, wc);
+                Console.Write("}");
                 line = Program.MyDecoder(line);
             }
+
+            if (clll.Count == 33)
+            {
+                var gg = clll.Select(x => Convert.ToInt64(x)).ToList().Sum() / clll.Count;
+            }
+
+
             // Выбираем текст для дальнейшей обработки
             var subgroups_str = Regex.Match(line, "<div class='Tiles'><div class='List '>(.*?)</div></div></div></div>").Groups[1].Value + "</div>" + "</div>";
 
@@ -216,15 +252,25 @@ namespace RegularX.Objs_auto
                 subGroups.Add(new SubGroup(subgroup.Groups[10].Value, link, subgroup.Groups[5].Value));
                 //subGroups.Clear();
             }
-            subGroups.RemoveRange(5, subgroups.Count-5);
-            Console.WriteLine();
+            subGroups.RemoveRange(3, subgroups.Count-3);
+            //Console.WriteLine("Drop subgroups");
+            //Console.WriteLine();
 
             // Остановился тут. Нужно сделать обход защиты страници деталей
+
+            foreach (var sg in subGroups)
+            {
+                sg.InsertIntoDB();
+                var c1 = GetDetails(sg.Link, modif);
+                sg.details.AddRange(c1);
+                Thread.Sleep(2500); // Для обхода защиты сайта.
+            }
 
             return subGroups;
         }
 
-        public static List<Detail> GetDetails(string link = "https://www.ilcats.ru/toyota/?function=getParts&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1&subgroup=1904")
+        public static List<Detail> GetDetails(string link = "https://www.ilcats.ru/toyota/?function=getParts&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1&subgroup=1904",
+            string modif = "")
         {
             // Todo: разделение id на старый и новый, навести порядок в коде
             // 
@@ -234,7 +280,9 @@ namespace RegularX.Objs_auto
             using (WebClient wc = new WebClient())
             {
                 wc.Headers.Add("user-agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
-                line = wc.DownloadString(link);
+                Console.Write("[");
+                line = DebugStr(link, wc);
+                Console.Write("]");
                 line = Program.MyDecoder(line);
             }
 
@@ -269,11 +317,32 @@ namespace RegularX.Objs_auto
                     var per = Regex.Match(body[2], "(.*?)>(.*?)<(.*?)");
                     var p = per.Groups[2].Value;
                     var info = Regex.Match(body[3], "<div(.*?)>(.*?)<br />(.*?)</div>");
-                    var i = info.Groups[2].Value + "   " +info.Groups[3].Value;
+                    var i = "";
+                    if (info.Success == false)
+                    {
+                        info = Regex.Match(body[3], "<div(.*?)>(.*?)</div>");
+                        i = info.Groups[2].Value;
+                    }
+                    else
+                    i = info.Groups[2].Value + "   " +info.Groups[3].Value;
+                    //Details.Clear();
                     Details.Add(new Detail(body[0], Convert.ToInt32(cnt.Groups[2].Value), info.Groups[2].Value, tmp_code, tmp_tree, per.Groups[2].Value));
                 }
             }
-            Console.WriteLine();
+            try
+            {
+                Details.RemoveRange(3, Details.Count - 3);
+                //Console.WriteLine("Д");
+            }
+            catch (Exception) { }
+            finally { /*Console.WriteLine("Drop details"); */}
+            //Console.WriteLine();
+
+            foreach(var detail in Details)
+            {
+                detail.InsertToDB();
+            }
+
             return Details;
         }
 
