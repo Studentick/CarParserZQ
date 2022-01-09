@@ -105,7 +105,8 @@ namespace RegularX.Objs_auto
                 Console.Write($"{model.ModelCode} parced;\t");
                 cpb.WritePercent(step, models.Count);
                 step++;
-                Thread.Sleep(2500); // Для обхода защиты сайта.
+                Thread.Sleep(2500); // Для обхода защиты сайта. 
+                // Лучше ждать 2,5-3 сек, чем потом 6-12 и не иметь нормального доступа к сайту
             }
             // ==================================================
             Console.WriteLine();

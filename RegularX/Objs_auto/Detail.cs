@@ -22,6 +22,7 @@ namespace RegularX.Objs_auto
         // todo: проверить допусимость int-a
         public string Link { get; private set; }
         public string OldLink { get; private set; }
+        public string ImgLink { get; private set; }
 
         public Detail(string code, int count, string info, string tree_code, string tree, string period)
         {

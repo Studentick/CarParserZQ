@@ -2,6 +2,7 @@
 using RegularX.Properties;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -17,6 +18,15 @@ namespace RegularX
         public static List<Model> models = new List<Model>();
         static void Main(string[] args)
         {
+
+            string url = @"https://teleprogramma.pro/wp-content/uploads/2015/09/c4ca4238a0b923820dcc509a6f75849b16.jpg";
+            using (WebClient client = new WebClient())
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+                string catalog = "images";
+                Directory.CreateDirectory(catalog);
+                client.DownloadFile(url, "test.jpg");
+            }
 
             //var gg = Controller.GetModels();
 
