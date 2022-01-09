@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,15 +27,27 @@ namespace RegularX.Objs_auto
             //this.details.AddRange(details);
         }
 
-        public void InsertIntoDB(/*string parrent_id*/)
+        public int InsertIntoDB(string group_name)
         {
-            //Insert into SubGroups(groups_id, name, link)
+            string str_comand = "INSERT INTO subgroups (name, group_name)" +
+                "VALUES (@name, @group_name)";
+            SqlCommand sqlComand = new SqlCommand(str_comand, Controller.sqlConnection);
 
-            //foreach(var it in this.details)
-            //{
-            //    it.InsertToDB(parrent_id);
-            //}
+            sqlComand.Parameters.AddWithValue("name", this.Name);
+            sqlComand.Parameters.AddWithValue("group_name", group_name);
 
+            // Для исключения ошибки, связанной с дублированием данных, но...
+            try
+            {
+                sqlComand.ExecuteNonQuery();
+            } // в дальнейшем этоту обработку планирую перенести в хранимую процедуру или в триггер
+            catch (Exception ex) { }
+            int res = -1;
+            str_comand = $"SELECT id FROM subgroups WHERE name = N'{this.Name}' AND group_name = N'{group_name}'";
+            sqlComand = new SqlCommand(str_comand, Controller.sqlConnection);
+            res = Convert.ToInt32(sqlComand.ExecuteScalar());
+            //sqlComand.ExecuteScalar();
+            return res;
         }
 
         private string ConvertLink(string inp, string sg_code)

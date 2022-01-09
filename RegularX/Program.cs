@@ -30,9 +30,14 @@ namespace RegularX
 
 
             //ss = Decoder(ss);
-            Controller.CheckConnectionDB();
-            var a = Controller.GetModels();
-
+            //Controller.CheckConnectionDB();
+            string ss = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|CatalogDB.mdf;Integrated Security=True;Connect Timeout=30";
+            using (Controller.sqlConnection = new System.Data.SqlClient.SqlConnection(Controller.con_str))
+            {
+                Controller.sqlConnection.Open();
+                var a = Controller.GetModels();
+                Console.WriteLine();
+            }
 
             Console.ReadKey();
         }

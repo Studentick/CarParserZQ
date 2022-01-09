@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -76,7 +77,21 @@ namespace RegularX.Objs_auto
 
         public void InsertIntoDB()
         {
+            string str_comand = "INSERT INTO models (model_code, f_period, model_name, complectation_cipher)" +
+                "VALUES (@model_code, @f_period, @model_name, @complectation_cipher)";
+            SqlCommand sqlComand = new SqlCommand(str_comand, Controller.sqlConnection);
 
+            sqlComand.Parameters.AddWithValue("model_code", this.ModelCode);
+            sqlComand.Parameters.AddWithValue("f_period", this.Period);
+            sqlComand.Parameters.AddWithValue("model_name", this.Name);
+            sqlComand.Parameters.AddWithValue("complectation_cipher", this.Complectation);
+
+            
+            try
+            {
+                sqlComand.ExecuteNonQuery();
+            } // В дальнейшем этоту обработку планирую перенести в хранимую процедуру или в триггер
+            catch (Exception ex) { }
         }
 
     }

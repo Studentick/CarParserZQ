@@ -12,20 +12,7 @@ namespace RegularX.Objs_auto
         public string GroupName { get; }
         public string GroupLink { get; }
         public string Modification { get; }
-
-        //public List<SubGroup> Subgroups
-        //{
-        //    get
-        //    {
-        //        return subgroups;
-        //    }
-
-        //    private set
-        //    {
-        //        subgroups = value;
-        //    }
-        //}
-
+        
         public List<SubGroup> subgroups;
                                                                  // complectation
         public ComplectationGroups(string name, string link, string modification, int group_code)

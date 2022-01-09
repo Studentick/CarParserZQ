@@ -44,4 +44,18 @@ create table detail_complectation_s
 	detail_code nvarchar(35) references details(detail_code),
 	complectation_code nvarchar(50) references complectations(complectation_code),
 	primary key(detail_code, complectation_code)
-)
+);
+
+CREATE VIEW result AS (
+select models.model_code, models.f_period AS model_period, models.model_name, models.complectation_cipher, -- Модель
+		complectations.complectation_code, complectations.f_period AS complectation_period,					-- Комплектация
+		details.detail_code, details.count AS det_count, details.f_period AS detail_period,					-- Деталь
+		details.info, details.link,	details.old_code, details.old_link, details.img_path, 
+		details.tree_code, details.tree, 
+		subgroups.name, subgroups.group_name																-- Группа
+		from
+		models join complectations on models.model_code = complectations.model_code 
+				join detail_complectation_s on complectations.complectation_code = detail_complectation_s.complectation_code
+				join details on detail_complectation_s.detail_code = details.detail_code
+				join subgroups on details.subgroup = subgroups.id
+);

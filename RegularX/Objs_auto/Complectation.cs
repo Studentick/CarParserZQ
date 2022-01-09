@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,10 +17,6 @@ namespace RegularX.Objs_auto
         public Dictionary<string, string> complectParams;
         public List<ComplectationGroups> complectationGroups;
 
-
-        // Нужно дописать конверторы
-        // И переделать логику, т.к. оказалось, что у авто, выпущенных в разные годы
-        // по разному спроектированы таблицы с комплектацией
         public Complectation(string model, string modification, 
             string link, string period, Dictionary<string, string> complectParams, int number)
         {
@@ -31,14 +28,37 @@ namespace RegularX.Objs_auto
             this.complectationGroups = new List<ComplectationGroups>();
         }
 
-        public void SetGroups()
+        // Перевод параметров автомобилей в JSON
+        public string DictToJson(Dictionary<string, string> dict)
         {
-
+            string json = "{";
+            foreach (var it in dict)
+            {
+                json += $"\"{it.Key}\": \"{it.Value}\", ";
+            }
+            json = json.Remove(json.Length - 2);
+            json += "}";
+            return json;
         }
 
         public void InsertIntoDB()
         {
+            string json_params = DictToJson(complectParams);
 
+            string str_comand = "INSERT INTO complectations (complectation_code, model_code, f_period, params)" +
+                "VALUES (@complectation_code, @model_code, @f_period, @params)";
+            SqlCommand sqlComand = new SqlCommand(str_comand, Controller.sqlConnection);
+
+            sqlComand.Parameters.AddWithValue("complectation_code", this.Modification);
+            sqlComand.Parameters.AddWithValue("model_code", this.Model);
+            sqlComand.Parameters.AddWithValue("f_period", this.Period);
+            sqlComand.Parameters.AddWithValue("params", json_params);
+
+            try
+            {
+                sqlComand.ExecuteNonQuery();
+            } // В дальнейшем этоту обработку планирую перенести в хранимую процедуру или в триггер
+            catch (Exception ex) { }
         }
 
         private string ConvertLink(string inp, int number)

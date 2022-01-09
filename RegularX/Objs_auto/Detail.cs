@@ -1,6 +1,7 @@
 ﻿using RegularX.Properties;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -56,11 +57,44 @@ namespace RegularX.Objs_auto
             }
         }
 
-        public void InsertToDB(/*string parrent_id*/)
+        public void InsertIntoDB(int subgroup_id, string modification)
         {
-            // "insert into Details (sub_group_id, tree_code, tree, code, old_code, count, 
-            // period, info, link, old_link) values (@sub_group_id, @tree_code, tree, code, 
-            // @old_code, @count, @period, @info, @link, @old_link)";
+            string str_comand = "INSERT INTO details (detail_code, count, f_period, info, link, old_code, old_link, img_path, tree_code, tree, subgroup)" +
+                "VALUES (@detail_code, @count, @f_period, @info, @link, @old_code, @old_link, @img_path, @tree_code, @tree, @subgroup)";
+            SqlCommand sqlComand = new SqlCommand(str_comand, Controller.sqlConnection);
+
+            sqlComand.Parameters.AddWithValue("detail_code", this.Code);
+            sqlComand.Parameters.AddWithValue("count", this.Count);
+            sqlComand.Parameters.AddWithValue("f_period", this.Period);
+            sqlComand.Parameters.AddWithValue("info", this.Info);
+            sqlComand.Parameters.AddWithValue("link", this.Link);
+            sqlComand.Parameters.AddWithValue("old_code", this.OldCode == null ? "null" : this.OldCode);
+            sqlComand.Parameters.AddWithValue("old_link", this.OldLink == null ? "null" : this.OldLink);
+            sqlComand.Parameters.AddWithValue("img_path", "null");
+            sqlComand.Parameters.AddWithValue("tree_code", this.Tree_Code);
+            sqlComand.Parameters.AddWithValue("tree", this.Tree);
+            sqlComand.Parameters.AddWithValue("subgroup", subgroup_id);
+            try
+            {
+                sqlComand.ExecuteNonQuery();
+            } // в дальнейшем этоту обработку планирую перенести в хранимую процедуру или в триггер
+            catch (Exception ex) {
+                var m = ex.Message;
+            }
+
+            str_comand = "INSERT INTO detail_complectation_s (detail_code, complectation_code)"
+                + "VALUES (@detail_code, @complectation_code)";
+            sqlComand = new SqlCommand(str_comand, Controller.sqlConnection);
+
+            sqlComand.Parameters.AddWithValue("detail_code", this.Code);
+            sqlComand.Parameters.AddWithValue("complectation_code", modification);
+            try
+            {
+                sqlComand.ExecuteNonQuery();
+            } // в дальнейшем этоту обработку планирую перенести в хранимую процедуру или в триггер
+            catch (Exception ex)
+            {}
+
         }
 
     }

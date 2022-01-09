@@ -43,8 +43,9 @@ namespace RegularX.Objs_auto
         {
             if (sqlConnection == null || sqlConnection.State != ConnectionState.Open)
             {
-                sqlConnection = new SqlConnection(con_str);
+                sqlConnection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\CatalogDB.mdf;Integrated Security=True;Connect Timeout=30");
                 sqlConnection.Open();
+                //sqlConnection.Close();
             }
         }
 
@@ -87,7 +88,7 @@ namespace RegularX.Objs_auto
             }
 
             models.RemoveRange(3, models.Count - 3);
-            Console.WriteLine("Drop models");
+            //Console.WriteLine("Drop models");
               
 
             // Установка прогрес-бара
@@ -223,8 +224,8 @@ namespace RegularX.Objs_auto
 
             foreach (var group in compGroup)
             {
-                group.InsertIntoDB();
-                var c1 = GetSubGroupCompl(group.GroupLink, group.Modification);
+                //group.InsertIntoDB();
+                var c1 = GetSubGroupCompl(group.GroupLink, group.Modification, group.GroupName);
                 group.subgroups.AddRange(c1);
                 Thread.Sleep(2500); // Для обхода защиты сайта.
             }
@@ -234,7 +235,7 @@ namespace RegularX.Objs_auto
         }
 
         public static List<SubGroup> GetSubGroupCompl(string link = "https://www.ilcats.ru/toyota/?function=getSubGroups&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1",
-            string modif = "")
+            string modif = "", string group_name = "")
         {
             List<SubGroup> subGroups = new List<SubGroup>();
             string line = "";
@@ -275,9 +276,9 @@ namespace RegularX.Objs_auto
             // Остановился тут. Нужно сделать обход защиты страници деталей
 
             foreach (var sg in subGroups)
-            {
-                sg.InsertIntoDB();
-                var c1 = GetDetails(sg.Link, modif);
+            { //qweqwe2123123123123123123
+                var sg_id = sg.InsertIntoDB(group_name);
+                var c1 = GetDetails(sg.Link, sg_id, modif);
                 sg.details.AddRange(c1);
                 Thread.Sleep(2500); // Для обхода защиты сайта.
             }
@@ -286,7 +287,7 @@ namespace RegularX.Objs_auto
         }
 
         public static List<Detail> GetDetails(string link = "https://www.ilcats.ru/toyota/?function=getParts&market=EU&model=671440&modification=LN51L-KRA&complectation=001&group=1&subgroup=1904",
-            string modif = "")
+            int subgroup_id = -1, string modif = "")
         {
             // Todo: разделение id на старый и новый, навести порядок в коде
             // 
@@ -356,7 +357,7 @@ namespace RegularX.Objs_auto
 
             foreach(var detail in Details)
             {
-                detail.InsertToDB();
+                detail.InsertIntoDB(subgroup_id, modif);
             }
 
             return Details;
