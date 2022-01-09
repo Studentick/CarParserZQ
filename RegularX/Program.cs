@@ -19,14 +19,19 @@ namespace RegularX
         static void Main(string[] args)
         {
 
-            string url = @"https://teleprogramma.pro/wp-content/uploads/2015/09/c4ca4238a0b923820dcc509a6f75849b16.jpg";
-            using (WebClient client = new WebClient())
-            {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-                string catalog = "images";
-                Directory.CreateDirectory(catalog);
-                client.DownloadFile(url, "test.jpg");
-            }
+            //string url = @"https://teleprogramma.pro/wp-content/uploads/2015/09/c4ca4238a0b923820dcc509a6f75849b16.jpg";
+            //using (WebClient client = new WebClient())
+            //{
+            //    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            //    string catalog = "images";
+            //    Directory.CreateDirectory(catalog);
+            //    client.DownloadFile(url, "test.jpg");
+            //}
+            //using (Controller.sqlConnection = new System.Data.SqlClient.SqlConnection(Controller.con_str))
+            //{
+            //    Controller.sqlConnection.Open();
+            //    var ggff = Controller.GetDetails();
+            //}
 
             //var gg = Controller.GetModels();
 

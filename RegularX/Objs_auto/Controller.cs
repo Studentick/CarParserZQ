@@ -29,6 +29,7 @@ namespace RegularX.Objs_auto
         static public List<string> detail_codes = new List<string>();
         public static Stopwatch clock = new Stopwatch(); // 123123123123123123123
         public static List<string> clll = new List<string>();
+        public static List<string> links = new List<string>();
 
         public static string DebugStr(string link, WebClient wc)
         {
@@ -110,6 +111,10 @@ namespace RegularX.Objs_auto
             }
             // ==================================================
             Console.WriteLine();
+
+            var ll = links.Distinct().ToList();
+
+            var strrr = string.Join(Environment.NewLine, links);
             // ==================================================
             // Debug code
             //var g1 = detail_codes.Count;
@@ -304,6 +309,10 @@ namespace RegularX.Objs_auto
                 line = Program.MyDecoder(line);
             }
 
+            var img_path = "https:" + Regex.Match(line, "(.*?)<img src='(.*?)' alt='' usemap='#myMap(.*?)'>(.*?)").Groups[2].Value;
+
+            links.Add(img_path);
+
             // Get detail tabble string
             var details_table_str = Regex.Match(line, "<table(.*?)Data-brand='(.*?)'>(.*?)</table>").Groups[3].Value;
 
@@ -344,7 +353,9 @@ namespace RegularX.Objs_auto
                     else
                     i = info.Groups[2].Value + "   " +info.Groups[3].Value;
                     //Details.Clear();
-                    Details.Add(new Detail(body[0], Convert.ToInt32(cnt.Groups[2].Value), info.Groups[2].Value, tmp_code, tmp_tree, per.Groups[2].Value));
+                    Details.Add(new Detail(body[0], Convert.ToInt32(cnt.Groups[2].Value), info.Groups[2].Value, tmp_code, 
+                        tmp_tree, per.Groups[2].Value, img_path));
+                    //break;
                 }
             }
             try

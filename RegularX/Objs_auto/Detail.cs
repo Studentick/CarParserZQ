@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -24,11 +27,12 @@ namespace RegularX.Objs_auto
         public string OldLink { get; private set; }
         public string ImgLink { get; private set; }
 
-        public Detail(string code, int count, string info, string tree_code, string tree, string period)
+        public Detail(string code, int count, string info, string tree_code, string tree, string period, string imgLink)
         {
             Count = count; Info = info; Tree_Code = tree_code;
             Tree = tree;  Period = Controller.ConvertPeriod(period); OldLink = OldLink;
             ConvertCode(code);
+            ImgLink = imgLink;
             Controller.detail_codes.Add(Code);
         }
 
@@ -60,6 +64,7 @@ namespace RegularX.Objs_auto
 
         public void InsertIntoDB(int subgroup_id, string modification)
         {
+            string img_path_str = GetImgPath();
             string str_comand = "INSERT INTO details (detail_code, count, f_period, info, link, old_code, old_link, img_path, tree_code, tree, subgroup)" +
                 "VALUES (@detail_code, @count, @f_period, @info, @link, @old_code, @old_link, @img_path, @tree_code, @tree, @subgroup)";
             SqlCommand sqlComand = new SqlCommand(str_comand, Controller.sqlConnection);
@@ -71,7 +76,7 @@ namespace RegularX.Objs_auto
             sqlComand.Parameters.AddWithValue("link", this.Link);
             sqlComand.Parameters.AddWithValue("old_code", this.OldCode == null ? "null" : this.OldCode);
             sqlComand.Parameters.AddWithValue("old_link", this.OldLink == null ? "null" : this.OldLink);
-            sqlComand.Parameters.AddWithValue("img_path", "null");
+            sqlComand.Parameters.AddWithValue("img_path", img_path_str);
             sqlComand.Parameters.AddWithValue("tree_code", this.Tree_Code);
             sqlComand.Parameters.AddWithValue("tree", this.Tree);
             sqlComand.Parameters.AddWithValue("subgroup", subgroup_id);
@@ -96,6 +101,34 @@ namespace RegularX.Objs_auto
             catch (Exception ex)
             {}
 
+        }
+
+        private string GetImgPath()
+        {
+            string path = "";
+            try
+            {
+                string catalog = "images";
+                Directory.CreateDirectory(catalog);
+                path = $@"{catalog}\{GetHash(this.ImgLink)}.png";
+
+                if (!File.Exists(path))
+                {
+                    using (WebClient client = new WebClient())
+                    {
+                        //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+                        client.DownloadFile(this.ImgLink, path);
+                    }
+                }
+            }
+            catch (Exception ex) { path = "null"; }
+
+            return path;
+        }
+
+        static string GetHash(string plaintext)
+        {
+            return string.Join("", (new SHA1Managed().ComputeHash(Encoding.UTF8.GetBytes(plaintext))).Select(x => x.ToString("X2")).ToArray());
         }
 
     }
