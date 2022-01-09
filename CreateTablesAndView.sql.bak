@@ -1,33 +1,30 @@
-﻿create table models								-- создание таблицы моделей
-(		
-	model_code nvarchar(35) primary key,		
-	f_period nvarchar(25),						-- тут можно разбит на 2 даты, 
-												-- 1(not null) - начало производства, 
-												-- 2 - завершение
-	model_name nvarchar(50) not null,		
-	complectation_cipher nvarchar(50)		
-);		
-		
-create table complectations 					-- создание таблицы комплектаций
+﻿create table models -- создание таблицы моделей
+(
+	model_code nvarchar(35) primary key,
+	f_period nvarchar(25), -- тут можно разбит на 2 даты, 
+	-- 1(not null) - начало производства, 2 - завершение
+	model_name nvarchar(50) not null,
+	complectation_cipher nvarchar(50)
+);
+
+create table complectations 
 (
 	complectation_code nvarchar(50) primary key,
 	model_code nvarchar(35),
 	f_period nvarchar(25),
 	params nvarchar(max) not null,
-	foreign key (model_code) references models(model_code) -- внешний ключ
+	foreign key (model_code) references models(model_code)
 );
 
-create table subgroups							-- создание таблицы подгрупп						
-(											
-	id int primary key identity,				-- идентификатор для облегчения запровов и
-												-- компактного хранения в БД,
-												-- а так же для упрощения запросов (автоинкремент)
-	name nvarchar(250) not null,				-- на случай очень большого значения группы						
-	group_name nvarchar(250) not null,			-- использовал т.к. не работало (max) в UNIQUE						
-	UNIQUE (name, group_name)					-- составной потенциальный ключ				
+create table subgroups
+(
+	id int primary key identity,
+	name nvarchar(250) not null,
+	group_name nvarchar(250) not null,
+	UNIQUE (name, group_name)
 );
 
-create table details							-- создание таблицы деталей
+create table details
 (
 	detail_code nvarchar(35) primary key,
 	count int,
@@ -39,10 +36,10 @@ create table details							-- создание таблицы деталей
 	img_path nvarchar(max),
 	tree_code nvarchar(15),
 	tree nvarchar(max),
-	subgroup int references subgroups(id)		-- внешний ключ
+	subgroup int references subgroups(id)
 );
 
-create table detail_complectation_s				-- создание таблицы для связи M-to-M между деталями и комплектациями
+create table detail_complectation_s
 (
 	detail_code nvarchar(35) references details(detail_code),
 	complectation_code nvarchar(50) references complectations(complectation_code),

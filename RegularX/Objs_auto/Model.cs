@@ -11,7 +11,6 @@ namespace RegularX.Objs_auto
     class Model
     {
         const string PreLink = "www.ilcats.ru";
-        // objs.Groups[4].Value = "28B510" - onlyString
         public string ModelCode { get; }
         public string Name { get; }
         public string Link { get; }
@@ -26,21 +25,23 @@ namespace RegularX.Objs_auto
             Name = name;
             Period = Controller.ConvertPeriod(period);
             Link = ConvertLink(link);
-            //Link = Controller.core_lnk + link;
             Complectation = compl;
             complectationsList = new List<Complectation>();
         }
 
+        // Устанавливает список комплектаций/модификаций модели автомобиля
         public void SetComplList(List<Complectation> complectationList)
         {
             this.complectationsList.AddRange(complectationList);
         }
 
+        // Вывод информации про авто
         public void Print()
         {
             Console.WriteLine($"Mpdel code: {ModelCode}\nName: {Name}\nPeriod: {Period}\nLink: {Link}\n");
         }
 
+        // Очистка строки от защиты/мусора
         private string ConvertLink(string inp)
         {
             string model = ""; string startDate = ""; string endDate = "";
@@ -63,16 +64,6 @@ namespace RegularX.Objs_auto
             inp = _postfix.Replace(inp, postfix_2);
 
             return Controller.core_lnk + inp;
-        }
-
-        private string ConvertPeriod(string inp)
-        {
-            return "";
-        }
-
-        public void SetComplectations()
-        {
-
         }
 
         public void InsertIntoDB()

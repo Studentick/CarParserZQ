@@ -16,13 +16,11 @@ namespace RegularX.Objs_auto
     {
         public string Tree_Code { get; }
         public string Tree { get; }
-        // todo: проверить допусимость int-a
         public string Code { get; private set; }
         public string OldCode { get; private set; }
         public int Count { get; }
         public string Period { get; }
         public string Info { get; }
-        // todo: проверить допусимость int-a
         public string Link { get; private set; }
         public string OldLink { get; private set; }
         public string ImgLink { get; private set; }
@@ -36,6 +34,8 @@ namespace RegularX.Objs_auto
             Controller.detail_codes.Add(Code);
         }
 
+        // Получение кода и ссылки, а так же старой ссылки и старого кода
+        // на случай, если они имеются
         protected void ConvertCode(string raw_code)
         {
             string pattern = "replaceNumber";
@@ -62,6 +62,7 @@ namespace RegularX.Objs_auto
             }
         }
 
+        // Внесение в БД строки деталей
         public void InsertIntoDB(int subgroup_id, string modification)
         {
             string img_path_str = GetImgPath();
@@ -103,6 +104,8 @@ namespace RegularX.Objs_auto
 
         }
 
+        // Получение уникального имени изображения для его внесения в БД
+        // если файл не существует, то он скачивается с сайта
         private string GetImgPath()
         {
             string path = "";
@@ -126,6 +129,7 @@ namespace RegularX.Objs_auto
             return path;
         }
 
+        // Получение хеш-суммы
         static string GetHash(string plaintext)
         {
             return string.Join("", (new SHA1Managed().ComputeHash(Encoding.UTF8.GetBytes(plaintext))).Select(x => x.ToString("X2")).ToArray());

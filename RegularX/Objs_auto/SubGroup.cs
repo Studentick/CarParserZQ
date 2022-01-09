@@ -22,11 +22,7 @@ namespace RegularX.Objs_auto
             details = new List<Detail>();
         }
 
-        public void SetDetails(List<Detail> details)
-        {
-            //this.details.AddRange(details);
-        }
-
+        // Внесение в БД строк групп
         public int InsertIntoDB(string group_name)
         {
             string str_comand = "INSERT INTO subgroups (name, group_name)" +
@@ -46,26 +42,17 @@ namespace RegularX.Objs_auto
             str_comand = $"SELECT id FROM subgroups WHERE name = N'{this.Name}' AND group_name = N'{group_name}'";
             sqlComand = new SqlCommand(str_comand, Controller.sqlConnection);
             res = Convert.ToInt32(sqlComand.ExecuteScalar());
-            //sqlComand.ExecuteScalar();
             return res;
         }
 
+        // Очистка ссылки
         private string ConvertLink(string inp, string sg_code)
         {
             var m1 = Regex.Match(inp, "(.*?)function=(.*?)&market=(.*?)");
-
             string func_1 = m1.Groups[2].Value; // +"function=" // на всякий случай
             string func_2 = "getParts";
-
-
             Regex r = new Regex(func_1);
-
             inp = r.Replace(inp, func_2) + "&subgroup=" + sg_code;
-
-            //string pattern = @"\s+";
-            //string target = " ";
-            //Regex regex = new Regex(pattern);
-            //string result = regex.Replace(text, target);
 
             return inp;
         }

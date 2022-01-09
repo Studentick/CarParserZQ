@@ -23,40 +23,23 @@ namespace RegularX.Objs_auto
             subgroups = new List<SubGroup>();
         }
 
+        // Установка подгрупп
         public void SetSubgroups(List<SubGroup> subgroups)
         {
             this.subgroups = subgroups;
         }
 
-        public void InsertIntoDB(string parrent_id)
-        {
-            //Insert into SubGroups(groups_id, name, link)
-        }
-
+        // Снятие защиты со строки
         private string ConvertLink(string inp, int group_code)
         {
             var m1 = Regex.Match(inp, "(.*?)function=(.*?)&market=(.*?)");
 
             string func_1 = m1.Groups[2].Value; // +"function=" // на всякий случай
             string func_2 = "getSubGroups";
-
-           
             Regex r = new Regex(func_1);
-
             inp = r.Replace(inp, func_2) + "&group=" + Convert.ToString(group_code);
-
-            //string pattern = @"\s+";
-            //string target = " ";
-            //Regex regex = new Regex(pattern);
-            //string result = regex.Replace(text, target);
 
             return inp;
         }
-
-        public void InsertIntoDB()
-        {
-
-        }
-
     }
 }

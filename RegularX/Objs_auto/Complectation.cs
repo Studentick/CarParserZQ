@@ -41,6 +41,7 @@ namespace RegularX.Objs_auto
             return json;
         }
 
+        // Внесение строк в БД о комплектации
         public void InsertIntoDB()
         {
             string json_params = DictToJson(complectParams);
@@ -61,6 +62,7 @@ namespace RegularX.Objs_auto
             catch (Exception ex) { }
         }
 
+        // Снятие защиты с сылки
         private string ConvertLink(string inp, int number)
         {
             var m1 = Regex.Match(inp, "(.*?)&market=(.*?)&model=(.*?)&modification=(.*?)&complectation=(.*?)$");
@@ -74,17 +76,12 @@ namespace RegularX.Objs_auto
             string postfix_2 = $"&model={this.Model}&modification={this.Modification}&complectation={FormatNumber(number)}";
 
             Regex r = new Regex(postfix_1);
-
             inp = r.Replace(inp, postfix_2);
-
-            //string pattern = @"\s+";
-            //string target = " ";
-            //Regex regex = new Regex(pattern);
-            //string result = regex.Replace(text, target);
 
             return Controller.core_lnk + inp;
         }
 
+        // Преобразование кода в текстовый формат 3-знакового числа
         private string FormatNumber(int number)
         {
             string output = ("000" + Convert.ToString(number));
